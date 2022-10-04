@@ -295,7 +295,7 @@ se tal j não existe então devolve ini-1.
 */
 int onde(int x, int *v, int ini, int fim)
 {
-  if (fim < ini)
+  if ((fim - 1) < ini)
     return (ini - 1);
   if (v[fim - 1] == x)
     return fim - 1;
