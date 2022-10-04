@@ -87,8 +87,57 @@ Valor de retorno: soma da subsequência máxima.
 double rsubMaxArray(double *x, int n, double *sfm, double *sfmarray, int *nsfm,
                     double *gbmarray, int *ngbm)
 {
-  /* IMPLEMENTE SEU CODIGO AQUI */
-  return -1.0;
+  if (n == 0)
+  {
+    return 0;
+  }
+  else
+  {
+    *nsfm = 0;
+
+    *sfm = 0;
+
+    *ngbm = 0;
+
+    double gMax = rsubMaxArray(x, n - 1, sfm, sfmarray, nsfm, gbmarray, ngbm);
+
+    if (x[n - 1] + *sfm > gMax)
+    {
+      *sfm = x[n - 1] + *sfm;
+
+      sfmarray[*nsfm] = x[n - 1];
+
+      *nsfm = *nsfm + 1;
+
+      *ngbm = *nsfm;
+
+      for (int i = 0; i < *ngbm; i++)
+      {
+        gbmarray[i] = sfmarray[i];
+      }
+
+      return *sfm;
+    }
+    else
+    {
+      if (x[n - 1] + *sfm > 0)
+      {
+        *sfm = x[n - 1] + *sfm;
+
+        sfmarray[*nsfm] = x[n - 1];
+        *nsfm = *nsfm + 1;
+
+        return gMax;
+      }
+      else
+      {
+        *nsfm = 0;
+        *sfm = 0;
+
+        return gMax;
+      }
+    }
+  }
 }
 
 /*
@@ -267,6 +316,7 @@ int main()
 {
 
   int i, noErros = 0, noTestes = 0;
+
   double a[] = {2, -3, 1.5, -1, 3, -2, -3, 3};
   double b[] = {2, -3, -1.5, -1, -3, -2, -3, 3};
   double c[] = {-2, -3, -1.5, -1, -3, -2, -3, -3};
@@ -453,213 +503,213 @@ int main()
   for (i = 0; i < 8; ++i)
     printf("%3.2f ", a[i]);
   printf("]\n");
-  /*
-    globalmax = rsubMaxArray(a, 8, &sufixmax, sufixmax_array, &n_sufixmax_array, globalmax_array, &n_globalmax_array);
 
-    printf("rsubMaxArray:\n");
-    printf("Globalmax: %3.2f\n", globalmax);
-    printf("Sufixmax: %3.2f\n", sufixmax);
-    printf("Subsequência máxima correta: [ ");
-    for (i = 0; i < n_globalmax_array; ++i)
-      printf("%3.2f ", globalmax_array[i]);
-    printf("]\n");
+  globalmax = rsubMaxArray(a, 8, &sufixmax, sufixmax_array, &n_sufixmax_array, globalmax_array, &n_globalmax_array);
 
-    noTestes++;
-    if (globalmax == 3.5)
-    {
-      printf("Teste %d: OK\n", noTestes);
-    }
-    else
-    {
-      printf("Teste %d: NOK: globalmax correta 3.5\n", noTestes);
-      noErros++;
-    }
+  printf("rsubMaxArray:\n");
+  printf("Globalmax: %3.2f\n", globalmax);
+  printf("Sufixmax: %3.2f\n", sufixmax);
+  printf("Subsequência máxima correta: [ ");
+  for (i = 0; i < n_globalmax_array; ++i)
+    printf("%3.2f ", globalmax_array[i]);
+  printf("]\n");
 
-    noTestes++;
-    if (sufixmax == 3.0)
-    {
-      printf("Teste %d: OK\n", noTestes);
-    }
-    else
-    {
-      printf("Teste %d: NOK: sufixmax correta 3.0\n", noTestes);
-      noErros++;
-    }
+  noTestes++;
+  if (globalmax == 3.5)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: globalmax correta 3.5\n", noTestes);
+    noErros++;
+  }
 
-    noTestes++;
-    if (globalmax_array[0] == 1.5 && globalmax_array[1] == -1.0 &&
-        globalmax_array[2] == 3.0)
-    {
-      printf("Teste %d: OK\n", noTestes);
-    }
-    else
-    {
-      printf("Teste %d: NOK: ", noTestes);
-      printf("Subsequência máxima correta: [ 1.50 -1.00 3.00 ]\n");
-      noErros++;
-    }
+  noTestes++;
+  if (sufixmax == 3.0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: sufixmax correta 3.0\n", noTestes);
+    noErros++;
+  }
 
-    printf("Sufixo máximo: [ ");
-    for (i = 0; i < n_sufixmax_array; ++i)
-      printf("%3.2f ", sufixmax_array[i]);
-    printf("]\n");
+  noTestes++;
+  if (globalmax_array[0] == 1.5 && globalmax_array[1] == -1.0 &&
+      globalmax_array[2] == 3.0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: ", noTestes);
+    printf("Subsequência máxima correta: [ 1.50 -1.00 3.00 ]\n");
+    noErros++;
+  }
 
-    noTestes++;
-    if (sufixmax_array[0] == 3.0)
-    {
-      printf("Teste %d: OK\n", noTestes);
-    }
-    else
-    {
-      printf("Teste %d: NOK: ", noTestes);
-      printf("Sufixo máximo correto: [ 3.00 ]\n");
-      noErros++;
-    }
-/*
-printf("Vetor: [");
-for (i = 0; i < 8; ++i)
-  printf("%3.2f ", b[i]);
-printf("]\n");
-globalmax = rsubMaxArray(b, 8, &sufixmax, sufixmax_array, &n_sufixmax_array, globalmax_array, &n_globalmax_array);
+  printf("Sufixo máximo: [ ");
+  for (i = 0; i < n_sufixmax_array; ++i)
+    printf("%3.2f ", sufixmax_array[i]);
+  printf("]\n");
 
-printf("rsubMaxArray:\n");
-printf("Globalmax: %3.2f\n", globalmax);
-printf("Sufixmax: %3.2f\n", sufixmax);
+  noTestes++;
+  if (sufixmax_array[0] == 3.0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: ", noTestes);
+    printf("Sufixo máximo correto: [ 3.00 ]\n");
+    noErros++;
+  }
 
-printf("Subsequência máxima: [ ");
-for (i = 0; i < n_globalmax_array; ++i)
-  printf("%3.2f ", globalmax_array[i]);
-printf("]\n");
+  printf("Vetor: [");
+  for (i = 0; i < 8; ++i)
+    printf("%3.2f ", b[i]);
+  printf("]\n");
+  globalmax = rsubMaxArray(b, 8, &sufixmax, sufixmax_array, &n_sufixmax_array, globalmax_array, &n_globalmax_array);
 
-printf("Sufixo máximo: [ ");
-for (i = 0; i < n_sufixmax_array; ++i)
-  printf("%3.2f ", sufixmax_array[i]);
-printf("]\n");
+  printf("rsubMaxArray:\n");
+  printf("Globalmax: %3.2f\n", globalmax);
+  printf("Sufixmax: %3.2f\n", sufixmax);
 
-noTestes++;
-if (globalmax == 3.0)
-{
-  printf("Teste %d: OK\n", noTestes);
-}
-else
-{
-  printf("Teste %d: NOK: globalmax correta 3.0\n", noTestes);
-  noErros++;
-}
+  printf("Subsequência máxima: [ ");
+  for (i = 0; i < n_globalmax_array; ++i)
+    printf("%3.2f ", globalmax_array[i]);
+  printf("]\n");
 
-noTestes++;
-if (sufixmax == 3.0)
-{
-  printf("Teste %d: OK\n", noTestes);
-}
-else
-{
-  printf("Teste %d: NOK: sufixmax correta 3.0\n", noTestes);
-  noErros++;
-}
+  printf("Sufixo máximo: [ ");
+  for (i = 0; i < n_sufixmax_array; ++i)
+    printf("%3.2f ", sufixmax_array[i]);
+  printf("]\n");
 
-noTestes++;
-if (globalmax_array[0] == 3.0)
-{
-  printf("Teste %d: OK\n", noTestes);
-}
-else
-{
-  printf("Teste %d: NOK: ", noTestes);
-  printf("Subsequência máxima correta: [ 3.00 ]\n");
-  noErros++;
-}
+  noTestes++;
+  if (globalmax == 3.0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: globalmax correta 3.0\n", noTestes);
+    noErros++;
+  }
 
-printf("Sufixo máximo: [ ");
-for (i = 0; i < n_sufixmax_array; ++i)
-  printf("%3.2f ", sufixmax_array[i]);
-printf("]\n");
+  noTestes++;
+  if (sufixmax == 3.0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: sufixmax correta 3.0\n", noTestes);
+    noErros++;
+  }
 
-noTestes++;
-if (sufixmax_array[0] == 3.0)
-{
-  printf("Teste %d: OK\n", noTestes);
-}
-else
-{
-  printf("Teste %d: NOK: ", noTestes);
-  printf("Sufixo máximo correto: [ 3.00 ]\n");
-  noErros++;
-}
+  noTestes++;
+  if (globalmax_array[0] == 3.0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: ", noTestes);
+    printf("Subsequência máxima correta: [ 3.00 ]\n");
+    noErros++;
+  }
 
-printf("Vetor: [");
-for (i = 0; i < 8; ++i)
-  printf("%3.2f ", c[i]);
-printf("]\n");
+  printf("Sufixo máximo: [ ");
+  for (i = 0; i < n_sufixmax_array; ++i)
+    printf("%3.2f ", sufixmax_array[i]);
+  printf("]\n");
 
-globalmax = rsubMaxArray(c, 8, &sufixmax, sufixmax_array, &n_sufixmax_array, globalmax_array, &n_globalmax_array);
+  noTestes++;
+  if (sufixmax_array[0] == 3.0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: ", noTestes);
+    printf("Sufixo máximo correto: [ 3.00 ]\n");
+    noErros++;
+  }
 
-printf("rsubMaxArray:\n");
-printf("Globalmax: %3.2f\n", globalmax);
-printf("Sufixmax: %3.2f\n", sufixmax);
+  printf("Vetor: [");
+  for (i = 0; i < 8; ++i)
+    printf("%3.2f ", c[i]);
+  printf("]\n");
 
-noTestes++;
-if (globalmax == 0.0)
-{
-  printf("Teste %d: OK\n", noTestes);
-}
-else
-{
-  printf("Teste %d: NOK: globalmax correta 0\n", noTestes);
-  noErros++;
-}
+  globalmax = rsubMaxArray(c, 8, &sufixmax, sufixmax_array, &n_sufixmax_array, globalmax_array, &n_globalmax_array);
 
-noTestes++;
-if (sufixmax == 0.0)
-{
-  printf("Teste %d: OK\n", noTestes);
-}
-else
-{
-  printf("Teste %d: NOK: sufixmax correta 0.0\n", noTestes);
-  noErros++;
-}
+  printf("rsubMaxArray:\n");
+  printf("Globalmax: %3.2f\n", globalmax);
+  printf("Sufixmax: %3.2f\n", sufixmax);
 
-printf("Subsequência máxima: [ ");
+  noTestes++;
+  if (globalmax == 0.0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: globalmax correta 0\n", noTestes);
+    noErros++;
+  }
 
-for (i = 0; i < n_globalmax_array; ++i)
-  printf("%3.2f ", globalmax_array[i]);
-printf("]\n");
+  noTestes++;
+  if (sufixmax == 0.0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: sufixmax correta 0.0\n", noTestes);
+    noErros++;
+  }
 
-printf("Sufixo máximo: [ ");
-for (i = 0; i < n_sufixmax_array; ++i)
-  printf("%3.2f ", sufixmax_array[i]);
-printf("]\n");
+  printf("Subsequência máxima: [ ");
 
-noTestes++;
-if (n_globalmax_array == 0)
-{
-  printf("Teste %d: OK\n", noTestes);
-}
-else
-{
-  printf("Teste %d: NOK: ", noTestes);
-  printf("Subsequência máxima correta: [ ]\n");
-  noErros++;
-}
+  for (i = 0; i < n_globalmax_array; ++i)
+    printf("%3.2f ", globalmax_array[i]);
+  printf("]\n");
 
-printf("Sufixo máximo: [ ");
-for (i = 0; i < n_sufixmax_array; ++i)
-  printf("%3.2f ", sufixmax_array[i]);
-printf("]\n");
+  printf("Sufixo máximo: [ ");
+  for (i = 0; i < n_sufixmax_array; ++i)
+    printf("%3.2f ", sufixmax_array[i]);
+  printf("]\n");
 
-noTestes++;
-if (n_sufixmax_array == 0)
-{
-  printf("Teste %d: OK\n", noTestes);
-}
-else
-{
-  printf("Teste %d: NOK: ", noTestes);
-  printf("Sufixo máximo correto: [ ]\n");
-  noErros++;
-}
-*/
+  noTestes++;
+  if (n_globalmax_array == 0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: ", noTestes);
+    printf("Subsequência máxima correta: [ ]\n");
+    noErros++;
+  }
+
+  printf("Sufixo máximo: [ ");
+  for (i = 0; i < n_sufixmax_array; ++i)
+    printf("%3.2f ", sufixmax_array[i]);
+  printf("]\n");
+
+  noTestes++;
+  if (n_sufixmax_array == 0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: ", noTestes);
+    printf("Sufixo máximo correto: [ ]\n");
+    noErros++;
+  }
+
   int array2[] = {16, 14, 10, 8, 7, 9, 3, 2, 4, 1, 0, 3, 4, 5, 12};
   int compHeap = 10;
   int tamArray2 = 15;
@@ -768,5 +818,6 @@ else
     printf("Teste %d: NOK: a posição correta: 6\n", noTestes);
     noErros++;
   }
+
   return 0;
 }
