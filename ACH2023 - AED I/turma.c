@@ -30,7 +30,7 @@ int tamanho(TURMA *turma)
 	while (proximo != turma->listaNUSP->aluno)
 	{
 		tam++;
-		proximo = turma->listaNUSP->prox;
+		proximo = proximo->prox;
 	}
 
 	return tam;
@@ -42,10 +42,22 @@ int tamanho(TURMA *turma)
    presente na turma. */
 ALUNO *buscarAluno(TURMA *turma, int nusp)
 {
+	if (nusp < 0)
+		return NULL;
 
-	/* COMPLETE/IMPLEMENTE SEU CODIGO AQUI */
+	PONT aluno = turma->listaNUSP->aluno;
+	PONT proximo = turma->listaNUSP->prox;
 
-	return NULL;
+	int i = 0;
+	int tam = tamanho(turma);
+
+	while (proximo->aluno->nusp != nusp && i < tam)
+	{
+		proximo = proximo->prox;
+		i++;
+	}
+
+	return proximo;
 }
 
 /* Funcao que recebe o endereco de uma turma e o numero USP, nota e frequencia
@@ -60,7 +72,7 @@ ALUNO *buscarAluno(TURMA *turma, int nusp)
 	 1a) alocacao dinamica de memoria para uma estrutura do tipo ALUNO e
 		 preenchimento de seus campos com os respectivos parametros recebidos
 		 pela funcao de insercao;
-	 2a) alocacao dinamica de memoria de duas estruturas do tipo ELEMENTO
+	 *2a) alocacao dinamica de memoria de duas estruturas do tipo ELEMENTO
 		 (ambas irao referenciar o novo aluno por meio de seu campo 'aluno'.
 		 Uma delas devera ser inserida na posicao correta da lista ordenada
 		 por nusp e a outra na posicao correta da lista ordenada por nota.
@@ -69,9 +81,24 @@ ALUNO *buscarAluno(TURMA *turma, int nusp)
 bool inserirAluno(TURMA *turma, int nusp, int nota, int frequencia)
 {
 
-	/* COMPLETE/IMPLEMENTE SEU CODIGO AQUI */
+	if (nusp < 0 || nota < 0 || nota > 100 || frequencia < 0 || frequencia > 100)
+		return false;
+	if (buscarAluno(turma, nusp))
+		return false;
+	else
+	{
+		ALUNO *novoAluno = (ALUNO *)malloc(sizeof(ALUNO));
+		novoAluno->freq = frequencia;
+		novoAluno->nota = nota;
+		novoAluno->nusp = nusp;
 
-	return false;
+		PONT novoElementoNUSP = (PONT)malloc(sizeof(ELEMENTO));
+		PONT novoElementoNOTA = (PONT)malloc(sizeof(ELEMENTO));
+
+		novoElementoNOTA->aluno = novoAluno;
+		novoElementoNUSP->aluno = novoAluno;
+	}
+	return true;
 }
 
 /* Funcao que recebe o endereco de uma turma e um numero USP e deve:
@@ -94,7 +121,7 @@ bool excluirAluno(TURMA *turma, int nusp)
 
 /* Funcao que cria e retorna uma TURMA.
    Neste EP, uma turma contem duas listas ligadas de ELEMENTOS,
-   estas listas sao circulares e possuem no-cabeca
+   estas listas sao circulares e https://estagiobancopan.com.br/possuem no-cabeca
 */
 TURMA inicializaTurma()
 {
