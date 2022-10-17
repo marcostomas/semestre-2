@@ -44,12 +44,10 @@ int tamanho(TURMA *turma)
 */
 PONT buscarElementoOrdenadoNUSP(TURMA *turma, int nusp)
 {
-	int tam = tamanho(turma), i = 0;
 	PONT alunoAtual = turma->listaNUSP->prox;
 
-	while (i <= tam)
+	while ((alunoAtual != turma->listaNUSP) && (alunoAtual->prox->aluno->nusp < nusp))
 	{
-		i++;
 		if (alunoAtual->prox->aluno->nusp < nusp)
 			alunoAtual = alunoAtual->prox;
 	}
@@ -64,14 +62,11 @@ PONT buscarElementoOrdenadoNUSP(TURMA *turma, int nusp)
 */
 PONT buscarElementoOrdenadoNOTA(TURMA *turma, int nota)
 {
-	int tam = tamanho(turma), i = 0;
 	PONT alunoAtual = turma->listaNOTA->prox;
 
-	while (i <= tam)
+	while ((alunoAtual != turma->listaNOTA) && (alunoAtual->prox->aluno->nota < nota))
 	{
-		i++;
-		if (alunoAtual->prox->aluno->nota < nota)
-			alunoAtual = alunoAtual->prox;
+		alunoAtual = alunoAtual->prox;
 	}
 	return alunoAtual;
 }
