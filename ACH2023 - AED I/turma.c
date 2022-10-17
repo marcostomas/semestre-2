@@ -27,13 +27,53 @@ int tamanho(TURMA *turma)
 	int tam = 0;
 	PONT proximo = turma->listaNUSP->prox;
 
-	while (proximo != turma->listaNUSP->aluno)
+	while (proximo != turma->listaNUSP)
 	{
 		tam++;
 		proximo = proximo->prox;
 	}
 
 	return tam;
+}
+
+/*
+	Esta função é auxiliar para a função insereAluno().
+	Ela busca a posição do último elemento que tem número usp menor
+	do que está sendo inserido.
+
+*/
+PONT buscarElementoOrdenadoNUSP(TURMA *turma, int nusp)
+{
+	int tam = tamanho(turma), i = 0;
+	PONT alunoAtual = turma->listaNUSP->prox;
+
+	while (i <= tam)
+	{
+		i++;
+		if (alunoAtual->prox->aluno->nusp < nusp)
+			alunoAtual = alunoAtual->prox;
+	}
+	return alunoAtual;
+}
+
+/*
+	Esta função é auxiliar para a função insereAluno().
+	Ela busca a posição do último elemento que tem nota menor
+	do que está sendo inserido.
+
+*/
+PONT buscarElementoOrdenadoNOTA(TURMA *turma, int nota)
+{
+	int tam = tamanho(turma), i = 0;
+	PONT alunoAtual = turma->listaNOTA->prox;
+
+	while (i <= tam)
+	{
+		i++;
+		if (alunoAtual->prox->aluno->nota < nota)
+			alunoAtual = alunoAtual->prox;
+	}
+	return alunoAtual;
 }
 
 /* Funcao que recebe o endereco de uma turma e um numero USP e retorna
@@ -45,19 +85,17 @@ ALUNO *buscarAluno(TURMA *turma, int nusp)
 	if (nusp < 0)
 		return NULL;
 
-	PONT aluno = turma->listaNUSP->aluno;
-	PONT proximo = turma->listaNUSP->prox;
+	PONT primeiroElementoValido = turma->listaNUSP->prox;
+	int i = 0, tam = tamanho(turma);
 
-	int i = 0;
-	int tam = tamanho(turma);
-
-	while (proximo->aluno->nusp != nusp && i < tam)
+	while (i <= tam)
 	{
-		proximo = proximo->prox;
+		if (primeiroElementoValido->aluno->nusp == nusp)
+			return primeiroElementoValido->aluno;
+		primeiroElementoValido = primeiroElementoValido->prox;
 		i++;
 	}
-
-	return proximo;
+	return NULL;
 }
 
 /* Funcao que recebe o endereco de uma turma e o numero USP, nota e frequencia
@@ -92,13 +130,26 @@ bool inserirAluno(TURMA *turma, int nusp, int nota, int frequencia)
 		novoAluno->nota = nota;
 		novoAluno->nusp = nusp;
 
-		PONT novoElementoNUSP = (PONT)malloc(sizeof(ELEMENTO));
+		PONT novoElementoUSP = (PONT)malloc(sizeof(ELEMENTO));
 		PONT novoElementoNOTA = (PONT)malloc(sizeof(ELEMENTO));
-
+		novoElementoUSP->aluno = novoAluno;
 		novoElementoNOTA->aluno = novoAluno;
-		novoElementoNUSP->aluno = novoAluno;
+
+		PONT elementoAnteriorNUSP = buscarElementoOrdenadoNUSP(turma, nusp);
+		PONT elementoAnteriorNOTA = buscarElementoOrdenadoNOTA(turma, nota);
+
+		PONT aux = elementoAnteriorNUSP->prox;
+		elementoAnteriorNUSP->prox = novoElementoUSP;
+		novoElementoUSP->prox = aux;
+
+		aux = NULL;
+
+		aux = elementoAnteriorNOTA->prox;
+		elementoAnteriorNOTA->prox = novoElementoNOTA;
+		novoElementoNOTA->prox = aux;
+
+		return true;
 	}
-	return true;
 }
 
 /* Funcao que recebe o endereco de uma turma e um numero USP e deve:
@@ -113,10 +164,23 @@ bool inserirAluno(TURMA *turma, int nusp, int nota, int frequencia)
 */
 bool excluirAluno(TURMA *turma, int nusp)
 {
+	ALUNO *alunoBuscado = buscarAluno(turma, nusp);
+	if (!alunoBuscado)
+		return false;
+	else
+	{
+		PONT elementoAnteriorNUSP = buscarElementoOrdenadoNUSP(turma, nusp);
+		PONT elementoAExcluirNUSP = elementoAnteriorNUSP->prox;
+		elementoAnteriorNUSP->prox = elementoAExcluirNUSP->prox;
+		free(elementoAExcluirNUSP);
 
-	/* COMPLETE/IMPLEMENTE SEU CODIGO AQUI */
+		PONT elementoAnteriorNOTA = buscarElementoOrdenadoNOTA(turma, alunoBuscado->nota);
+		PONT elementoAExcluirNOTA = elementoAnteriorNOTA->prox;
+		elementoAnteriorNOTA->prox = elementoAExcluirNOTA->prox;
+		free(elementoAExcluirNOTA);
 
-	return false;
+		return true;
+	}
 }
 
 /* Funcao que cria e retorna uma TURMA.
