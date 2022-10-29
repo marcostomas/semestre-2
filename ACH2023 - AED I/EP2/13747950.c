@@ -159,10 +159,31 @@ bool inserirAluno(TURMA *turma, int nusp, int nota, int frequencia)
 */
 bool excluirAluno(TURMA *turma, int nusp)
 {
+	PONT alunoBuscado = buscarAluno(turma, nusp);
 
-	/* COMPLETE/IMPLEMENTE SEU CODIGO AQUI */
+	if (!alunoBuscado)
+		return false;
+	else
+	{
+		alunoBuscado->ant->prox = alunoBuscado->prox;
+		alunoBuscado->prox->ant = alunoBuscado->ant;
+		free(alunoBuscado);
 
-	return false;
+		return true;
+	}
+}
+
+PONT buscarAlunoRec(TURMA *turma, int nusp)
+{
+	PONT elmentoAtual = turma->LISTAS[1];
+	while (elmentoAtual->prox != turma->LISTAS[1])
+	{
+		elmentoAtual = elmentoAtual->prox;
+		if (elmentoAtual->aluno.nusp == nusp)
+			return elmentoAtual;
+	}
+
+	return NULL;
 }
 
 /* Funcao que recebe o endereco de uma turma, o numero USP e a nota de
@@ -178,10 +199,62 @@ bool excluirAluno(TURMA *turma, int nusp)
    a funcao devera retornar true. */
 bool inserirNotaRecuperacao(TURMA *turma, int nusp, int nota)
 {
+	PONT alunoBuscado = buscarAlunoRec(turma, nusp);
 
-	/* COMPLETE/IMPLEMENTE SEU CODIGO AQUI */
+	if (!alunoBuscado)
+		return false;
 
-	return false;
+	int frequencia = alunoBuscado->aluno.freq;
+
+	if (excluirAluno(turma, nusp))
+	{
+		if (nota >= 50 && frequencia >= 70)
+		{
+			int i = 0, tam = tamanho(turma);
+			PONT elementoAtual = turma->LISTAS[0];
+
+			while (i <= tam)
+			{
+				if ((elementoAtual->prox->aluno.nusp != -1) && (elementoAtual->prox->aluno.nusp < nusp))
+					elementoAtual = elementoAtual->prox;
+				i++;
+			}
+
+			alunoBuscado->aluno.nusp = nusp;
+			alunoBuscado->aluno.nota = nota;
+			alunoBuscado->aluno.freq = frequencia;
+
+			alunoBuscado->prox = elementoAtual->prox;
+			alunoBuscado->ant = elementoAtual;
+
+			elementoAtual->prox->ant = alunoBuscado;
+			elementoAtual->prox = alunoBuscado;
+		}
+		else
+		{
+			int i = 0, tam = tamanho(turma);
+			PONT elementoAtual = turma->LISTAS[2];
+
+			while (i <= tam)
+			{
+				if ((elementoAtual->prox->aluno.nusp != -1) && (elementoAtual->prox->aluno.nusp < nusp))
+					elementoAtual = elementoAtual->prox;
+				i++;
+			}
+			alunoBuscado->aluno.nusp = nusp;
+			alunoBuscado->aluno.nota = nota;
+			alunoBuscado->aluno.freq = frequencia;
+
+			alunoBuscado->prox = elementoAtual->prox;
+			alunoBuscado->ant = elementoAtual;
+
+			elementoAtual->prox->ant = alunoBuscado;
+			elementoAtual->prox = alunoBuscado;
+		}
+		return true;
+	}
+	else
+		return false;
 }
 
 /* Funcao que cria e retorna uma TURMA.
