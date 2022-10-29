@@ -180,7 +180,7 @@ bool excluirAluno(TURMA *turma, int nusp)
 
 /* Funcao que cria e retorna uma TURMA.
    Neste EP, uma turma contem duas listas ligadas de ELEMENTOS,
-   estas listas sao circulares e https://estagiobancopan.com.br/possuem no-cabeca
+   estas listas sao circulares e possuem no-cabeca
 */
 TURMA inicializaTurma()
 {
