@@ -48,8 +48,8 @@ PONT buscarElementoOrdenadoNUSP(TURMA *turma, int nusp)
 
 	while ((alunoAtual != turma->listaNUSP) && (alunoAtual->prox->aluno->nusp < nusp))
 	{
-		if (alunoAtual->prox->aluno->nusp < nusp)
-			alunoAtual = alunoAtual->prox;
+		if (alunoAtual->prox == turma->listaNUSP)
+			return alunoAtual;
 	}
 	return alunoAtual;
 }
