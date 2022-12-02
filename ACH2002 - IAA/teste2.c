@@ -152,8 +152,56 @@ S[] = {2,3,5,6}, S2 será S2 [] = {0,2,3,5,6}.
 
 celula_mochila **mochila(int *S, int n, int K)
 {
-  /* IMPLEMENTE SEU CODIGO AQUI */
-  return NULL;
+
+  if (S == NULL || n <= 0 || K <= 0)
+    return NULL;
+
+  int S2tam = n + 1, a, b;
+  celula_mochila **pont = (celula_mochila **)malloc(sizeof(celula_mochila *) * S2tam);
+  int *S2 = (int *)malloc(sizeof(int) * S2tam);
+
+  pont[0][0].exists = true;
+  for (int i = 0; i < (n + 1); i++)
+  {
+    pont[i] = (celula_mochila *)malloc(sizeof(celula_mochila) * (K + 1));
+  }
+
+  S2[0] = 0;
+  for (int i = 1; i < S2tam; i++)
+  {
+    S2[i] = S[i - 1];
+  }
+
+  for (a = 1; a < (K + 1); a++)
+  {
+    pont[0][a].exists = false;
+  }
+
+  for (a = 1; a < S2tam; a++)
+  {
+    for (b = 0; b < (K + 1); b++)
+    {
+      pont[a][b].exists = false;
+      if (pont[a - 1][b].exists)
+      {
+        pont[a][b].exists = true;
+        pont[a][b].belongs = false;
+      }
+      else
+      {
+        if (b - S2[a] >= 0)
+        {
+          if (pont[a - 1][b - S2[a]].exists)
+          {
+            pont[a][b].exists = true;
+            pont[a][b].belongs = true;
+          }
+        }
+      }
+    }
+  }
+
+  return pont;
 }
 
 /* selecionaItensMochila() percorre uma matriz P[n+1,K+1] com as
@@ -178,9 +226,34 @@ no arranjo itens passado como parâmetro.
 
 void selecionaItensMochila(int *itens, celula_mochila **P, int *S, int n, int K)
 {
-  int i, k;
+  int i, k, j;
 
-  /* IMPLEMENTE SEU CODIGO AQUI */
+  int *S2 = (int *)malloc((n + 1) * sizeof(int));
+  S2[0] = 0;
+
+  for (int size = 0; size <= n + 1; size++)
+  {
+    S2[size + 1] = S[size];
+  }
+
+  k = K;
+  j = 0;
+
+  while (k > 0)
+  {
+    for (i = 1; i <= n; i++)
+    {
+      if (P[i][k].belongs == true && P[i][k].exists == true)
+      {
+        if (k - S2[i] >= 0)
+        {
+          itens[j] = S2[i];
+          k = k - S2[i];
+          j++;
+        }
+      }
+    }
+  }
 }
 
 /* imprimeMatrizP() foi criada para imprimir de forma "bonita"
@@ -222,120 +295,119 @@ void imprimeMatrizP(celula_mochila **p, int *s, int n, int K)
 int main()
 {
   int noErros = 0, noTestes = 0;
-  /*
-   int **grf_dist;
-   int i, j, ini, fim, n = 7;
+  int **grf_dist;
+  int i, j, ini, fim, n = 7;
 
-   // Prepara dados para testar a função dijkstra()
-   grf_dist = (int **)malloc(n * sizeof(int *));
-   for (i = 0; i < n; ++i)
-   {
-     grf_dist[i] = (int *)malloc(n * sizeof(int));
-   }
+  // Prepara dados para testar a função dijkstra()
+  grf_dist = (int **)malloc(n * sizeof(int *));
+  for (i = 0; i < n; ++i)
+  {
+    grf_dist[i] = (int *)malloc(n * sizeof(int));
+  }
 
-   for (i = 0; i < n; ++i)
-     for (j = 0; j < n; ++j)
-       grf_dist[i][j] = INT_MAX;
+  for (i = 0; i < n; ++i)
+    for (j = 0; j < n; ++j)
+      grf_dist[i][j] = INT_MAX;
 
-   grf_dist[0][1] = 6;
-   grf_dist[0][2] = 8;
-   grf_dist[0][3] = 7;
-   grf_dist[1][3] = 100;
-   grf_dist[1][4] = 99;
-   grf_dist[2][5] = 1;
-   grf_dist[3][2] = 200;
-   grf_dist[3][4] = 400;
-   grf_dist[3][5] = 500;
-   grf_dist[4][6] = 200;
-   grf_dist[5][4] = 600;
-   grf_dist[5][6] = 1;
+  grf_dist[0][1] = 6;
+  grf_dist[0][2] = 8;
+  grf_dist[0][3] = 7;
+  grf_dist[1][3] = 100;
+  grf_dist[1][4] = 99;
+  grf_dist[2][5] = 1;
+  grf_dist[3][2] = 200;
+  grf_dist[3][4] = 400;
+  grf_dist[3][5] = 500;
+  grf_dist[4][6] = 200;
+  grf_dist[5][4] = 600;
+  grf_dist[5][6] = 1;
 
-   // for(i = 0; i < n; ++i)
-   //   {
-   //     for(j = 0; j < n; ++j)
-   //       printf("grf_dist[%d][%d] = %d ", i, j, grf_dist[i][j]);
-   //     printf("\n");
-   //    }
+  for (i = 0; i < n; ++i)
+  {
+    for (j = 0; j < n; ++j)
+      printf("grf_dist[%d][%d] = %d ", i, j, grf_dist[i][j]);
+    printf("\n");
+  }
 
-   noTestes++;
-   ini = 0;
-   fim = 6;
-   printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
-   if (dijkstra(grf_dist, n, ini, fim) == 10)
-   {
-     printf("Teste %d: OK\n", noTestes);
-   }
-   else
-   {
-     printf("Teste %d: NOK: ", noTestes);
-     printf("Distância menor de %d a %d: %d\n", ini, fim, 10);
-     noErros++;
-   }
+  noTestes++;
+  ini = 0;
+  fim = 6;
+  printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
+  if (dijkstra(grf_dist, n, ini, fim) == 10)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: ", noTestes);
+    printf("Distância menor de %d a %d: %d\n", ini, fim, 10);
+    noErros++;
+  }
 
-   noTestes++;
-   ini = 0;
-   fim = 5;
-   printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
+  noTestes++;
+  ini = 0;
+  fim = 5;
+  printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
 
-   if (dijkstra(grf_dist, n, ini, fim) == 9)
-   {
-     printf("Teste %d: OK\n", noTestes);
-   }
-   else
-   {
-     printf("Teste %d: NOK: ", noTestes);
-     printf("Distância menor de %d a %d: %d\n", ini, fim, 9);
-     noErros++;
-   }
+  if (dijkstra(grf_dist, n, ini, fim) == 9)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK: ", noTestes);
+    printf("Distância menor de %d a %d: %d\n", ini, fim, 9);
+    noErros++;
+  }
 
-   noTestes++;
-   ini = 0;
-   fim = 4;
-   printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
+  noTestes++;
+  ini = 0;
+  fim = 4;
+  printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
 
-   if (dijkstra(grf_dist, n, ini, fim) == 105)
-   {
-     printf("Teste %d: OK\n", noTestes);
-   }
-   else
-   {
-     printf("Teste %d: NOK:", noTestes);
-     printf("Distância menor de %d a %d: %d\n", ini, fim, 105);
-     noErros++;
-   }
+  if (dijkstra(grf_dist, n, ini, fim) == 105)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK:", noTestes);
+    printf("Distância menor de %d a %d: %d\n", ini, fim, 105);
+    noErros++;
+  }
 
-   noTestes++;
-   ini = -1;
-   fim = 4;
-   printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
+  noTestes++;
+  ini = -1;
+  fim = 4;
+  printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
 
-   if (dijkstra(grf_dist, n, ini, fim) == 0)
-   {
-     printf("Teste %d: OK\n", noTestes);
-   }
-   else
-   {
-     printf("Teste %d: NOK:", noTestes);
-     printf("Distância menor de %d a %d: %d\n", ini, fim, 0);
-     noErros++;
-   }
+  if (dijkstra(grf_dist, n, ini, fim) == 0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK:", noTestes);
+    printf("Distância menor de %d a %d: %d\n", ini, fim, 0);
+    noErros++;
+  }
 
-   noTestes++;
-   ini = 0;
-   fim = 14;
-   printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
+  noTestes++;
+  ini = 0;
+  fim = 14;
+  printf("Distância menor de %d a %d: %d\n", ini, fim, dijkstra(grf_dist, n, ini, fim));
 
-   if (dijkstra(grf_dist, n, ini, fim) == 0)
-   {
-     printf("Teste %d: OK\n", noTestes);
-   }
-   else
-   {
-     printf("Teste %d: NOK:", noTestes);
-     printf("Distância menor de %d a %d: %d\n", ini, fim, 0);
-     noErros++;
-   }
- */
+  if (dijkstra(grf_dist, n, ini, fim) == 0)
+  {
+    printf("Teste %d: OK\n", noTestes);
+  }
+  else
+  {
+    printf("Teste %d: NOK:", noTestes);
+    printf("Distância menor de %d a %d: %d\n", ini, fim, 0);
+    noErros++;
+  }
+
   // Prepara dados para testar a função mochila() e selecionaItensMochila()
   noTestes++;
   int r[] = {2, 3, 5, 6}; // itens a serem possivelmente salvos na celula_mochila

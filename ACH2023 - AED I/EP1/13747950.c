@@ -37,38 +37,47 @@ int tamanho(TURMA *turma)
 }
 
 /*
-	Esta função é auxiliar para a função insereAluno().
-	Ela busca a posição do último elemento que tem número usp menor
-	do que está sendo inserido.
-
+	Esta função é auxiliar para a função insereAluno() e excluirAluno().
+	Ela busca o elemento anterior ao que está sendo excluído/incluído.
 */
-PONT buscarElementoOrdenadoNUSP(TURMA *turma, int nusp)
+PONT buscarElementoOrdenadoNUSPInsercao(TURMA *turma, int nusp)
 {
-	PONT alunoAtual = turma->listaNUSP->prox;
+	PONT elementoAtual = turma->listaNUSP;
+	int i = 0, tam = tamanho(turma);
 
-	while ((alunoAtual != turma->listaNUSP) && (alunoAtual->prox->aluno->nusp < nusp))
+	while (i <= tam)
 	{
+<<<<<<< HEAD:ACH2023 - AED I/turma.c
 		if (alunoAtual->prox == turma->listaNUSP)
 			return alunoAtual;
+=======
+		if ((elementoAtual->prox->aluno->nusp != -1) && (elementoAtual->prox->aluno->nusp < nusp))
+			elementoAtual = elementoAtual->prox;
+		i++;
+>>>>>>> f64cd3679d82ec9e97e588b8d2d2bbdb734fbd05:ACH2023 - AED I/EP1/13747950.c
 	}
-	return alunoAtual;
+
+	return elementoAtual;
 }
 
 /*
 	Esta função é auxiliar para a função insereAluno().
 	Ela busca a posição do último elemento que tem nota menor
 	do que está sendo inserido.
-
 */
-PONT buscarElementoOrdenadoNOTA(TURMA *turma, int nota)
+PONT buscarElementoOrdenadoNOTAInsercao(TURMA *turma, int nota)
 {
-	PONT alunoAtual = turma->listaNOTA->prox;
+	PONT elementoAtual = turma->listaNOTA;
+	int i = 0, tam = tamanho(turma);
 
-	while ((alunoAtual != turma->listaNOTA) && (alunoAtual->prox->aluno->nota < nota))
+	while (i <= tam)
 	{
-		alunoAtual = alunoAtual->prox;
+		if ((elementoAtual->prox->aluno->nota != -1) && (elementoAtual->prox->aluno->nota < nota))
+			elementoAtual = elementoAtual->prox;
+		i++;
 	}
-	return alunoAtual;
+
+	return elementoAtual;
 }
 
 /* Funcao que recebe o endereco de uma turma e um numero USP e retorna
@@ -83,7 +92,7 @@ ALUNO *buscarAluno(TURMA *turma, int nusp)
 	PONT primeiroElementoValido = turma->listaNUSP->prox;
 	int i = 0, tam = tamanho(turma);
 
-	while (i <= tam)
+	while (i < tam)
 	{
 		if (primeiroElementoValido->aluno->nusp == nusp)
 			return primeiroElementoValido->aluno;
@@ -130,18 +139,14 @@ bool inserirAluno(TURMA *turma, int nusp, int nota, int frequencia)
 		novoElementoUSP->aluno = novoAluno;
 		novoElementoNOTA->aluno = novoAluno;
 
-		PONT elementoAnteriorNUSP = buscarElementoOrdenadoNUSP(turma, nusp);
-		PONT elementoAnteriorNOTA = buscarElementoOrdenadoNOTA(turma, nota);
+		PONT elementoNUSP = buscarElementoOrdenadoNUSPInsercao(turma, nusp);
+		PONT elementoNOTA = buscarElementoOrdenadoNOTAInsercao(turma, nota);
 
-		PONT aux = elementoAnteriorNUSP->prox;
-		elementoAnteriorNUSP->prox = novoElementoUSP;
-		novoElementoUSP->prox = aux;
+		novoElementoUSP->prox = elementoNUSP->prox;
+		elementoNUSP->prox = novoElementoUSP;
 
-		aux = NULL;
-
-		aux = elementoAnteriorNOTA->prox;
-		elementoAnteriorNOTA->prox = novoElementoNOTA;
-		novoElementoNOTA->prox = aux;
+		novoElementoNOTA->prox = elementoNOTA->prox;
+		elementoNOTA->prox = novoElementoNOTA;
 
 		return true;
 	}
@@ -164,12 +169,12 @@ bool excluirAluno(TURMA *turma, int nusp)
 		return false;
 	else
 	{
-		PONT elementoAnteriorNUSP = buscarElementoOrdenadoNUSP(turma, nusp);
+		PONT elementoAnteriorNUSP = buscarElementoOrdenadoNUSPInsercao(turma, nusp);
 		PONT elementoAExcluirNUSP = elementoAnteriorNUSP->prox;
 		elementoAnteriorNUSP->prox = elementoAExcluirNUSP->prox;
 		free(elementoAExcluirNUSP);
 
-		PONT elementoAnteriorNOTA = buscarElementoOrdenadoNOTA(turma, alunoBuscado->nota);
+		PONT elementoAnteriorNOTA = buscarElementoOrdenadoNOTAInsercao(turma, alunoBuscado->nota);
 		PONT elementoAExcluirNOTA = elementoAnteriorNOTA->prox;
 		elementoAnteriorNOTA->prox = elementoAExcluirNOTA->prox;
 		free(elementoAExcluirNOTA);
@@ -180,7 +185,7 @@ bool excluirAluno(TURMA *turma, int nusp)
 
 /* Funcao que cria e retorna uma TURMA.
    Neste EP, uma turma contem duas listas ligadas de ELEMENTOS,
-   estas listas sao circulares e https://estagiobancopan.com.br/possuem no-cabeca
+   estas listas sao circulares e possuem no-cabeca
 */
 TURMA inicializaTurma()
 {
