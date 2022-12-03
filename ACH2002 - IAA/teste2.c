@@ -156,8 +156,9 @@ celula_mochila **mochila(int *S, int n, int K)
   if (S == NULL || n <= 0 || K <= 0)
     return NULL;
 
-  int S2tam = n + 1, a, b;
-  celula_mochila **pont = (celula_mochila **)malloc(sizeof(celula_mochila *) * S2tam);
+  int S2tam = n + 1;
+  int a, b;
+  celula_mochila **pont = (celula_mochila **)malloc(sizeof(celula_mochila *) * (n + 1));
   int *S2 = (int *)malloc(sizeof(int) * S2tam);
 
   pont[0][0].exists = true;
